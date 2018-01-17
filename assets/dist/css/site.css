@@ -571,9 +571,9 @@
 	nav.top_nav .feature h5 { font-family: ff-meta-web, Arial, sans-serif; font-weight: 600; }
 	nav.top_nav .feature * { text-align: center; }
 
-	nav.gateways { border-left: 1px solid #40304E; }
-	nav.gateways .item { border-right: 1px solid #40304E; float: left; }
-	nav.gateways .item a { background: url(../images/down-arrow.png) no-repeat center 36px; color: #FFF; display: block; font-size: 13px; font-style: italic; height: 50px; line-height: 50px; padding: 0 20px; text-align: center; }
+	nav.gateways { *border-left: 1px solid #40304E; }
+	nav.gateways .item { *border-right: 1px solid #40304E; float: left; }
+	nav.gateways .item a { *background: url(../images/down-arrow.png) no-repeat center 36px; color: #FFF; display: block; font-size: 13px; font-style: italic; height: 50px; line-height: 50px; padding: 0 20px; text-align: center; }
 	nav.gateways .item li.active a { background-color: #4F4171; background-image: url(../images/down-arrow-hover.png); }
 	nav.gateways .item .links li { float: none; margin: 20px 0 0 0; }
 	nav.gateways .item .links li a { background: transparent; color: #797979; display: block; font-size: 13px; height: auto; line-height: 16px; padding: 0; text-align: left; text-transform: none; }
@@ -3095,3 +3095,5 @@ a img.aligncenter{display:block;margin-left:auto;margin-right:auto}
 .home-content-column-1{width:0%}
 .home-content-column-2{width:70%}
 .home-content-column-3{width:30%}
+
+.hide{display:none}
