@@ -1,14 +1,19 @@
 <?php
 session_start();
 error_reporting(E_ERROR | E_PARSE);
-
-//$__pattern = '/MTA';
-$__pattern = '/tutu/test_frontend';
-
 define('MAIN_PATH', './');
-define('MAIN_URL', '//localhost'.$__pattern);
-//define('MAIN_URL', '//45.119.82.40'.$__pattern);
-define('API_URL', '//45.119.82.40:3003');
+
+
+/*** Start editing config here ***/
+$__pattern = '/MTA';
+//$__pattern = '/tutu/test_frontend';
+define('HOST_URL', '//localhost');
+//define('HOST_URL', '//45.119.82.40');
+/*** End editing config here ***/
+
+
+define('API_URL', HOST_URL.':3003');
+define('MAIN_URL', HOST_URL.$__pattern);
 define('ASSETS', MAIN_URL.'/assets');
 define('CSS', ASSETS.'/dist/css');
 define('JS', ASSETS.'/dist/js');
