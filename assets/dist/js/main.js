@@ -1,4 +1,3 @@
-var API_URL = 'http://localhost:3003';
 var __CURRENT_URL = location.href;
 var splitURL = __CURRENT_URL.split(MAIN_URL + '/');
 var __url = splitURL[splitURL.length - 1];
