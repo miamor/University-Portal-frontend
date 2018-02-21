@@ -1234,8 +1234,3 @@ function basename(path, suffix) {
     }
     return b;
 }
-
-// Site Ready
-$(document).ready(function () {
-    Site._init();
-});

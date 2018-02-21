@@ -375,6 +375,7 @@ $(document).ready(function () {
     $.getJSON(API_URL + '/info', function (response) {
         __siteInfo = response;
         $('body').html(renderSiteInfo($('body')));
+        Site._init();
     });
 
     $.getJSON(API_URL + '/modules', function (response) {
