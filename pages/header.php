@@ -21,7 +21,7 @@
 		<link rel="stylesheet" href="<?php echo CSS ?>/site.css" type="text/css" media="screen" />
 		<link rel="stylesheet" href="<?php echo CSS ?>/print.css" type="text/css" media="print" />
 
-        <script src="<?php echo MAIN_URL ?>/assets/jquery/jquery-1.11.0.min.js"></script>
+        <script src="<?php echo MAIN_URL ?>/assets/jquery/jquery-2.2.3.min.js"></script>
 		<script>var MAIN_URL = "<?php echo MAIN_URL ?>"; var API_URL = "<?php echo API_URL ?>";</script>
         <script src="<?php echo MAIN_URL ?>/assets/dist/js/site.js"></script>
         <script src="<?php echo MAIN_URL ?>/assets/dist/js/main.js"></script>
