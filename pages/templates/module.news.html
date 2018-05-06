@@ -1,0 +1,16 @@
+<div for="i={0 to last}" class="posts-list listing-alt">
+    <article class="post-18698 post type-post status-publish format-standard has-post-thumbnail" itemscope="">
+        <span class="cat-title cat-513">{{posts[i].cat}}</span>
+        <a href="{{posts[i].link}}" itemprop="url">
+            <img src="{{posts[i].thumbnail}}" class="attachment-main-block size-main-block wp-post-image no-display appear" alt="" title="{{posts[i].name}}" itemprop="image" width="351" height="185">
+        </a>
+        <div class="content">
+            <time itemprop="datePublished">{{posts[i].created_time}} </time>
+            <a href="{{posts[i].link}}" title="{{posts[i].name}}" itemprop="name url">{{posts[i].name}}</a>
+            <div class="excerpt">
+                <p>{{posts[i].content}}</p>
+                <div class="read-more"><a href="{{posts[i].link}}" title="Xem Thêm">Xem Thêm</a></div>
+            </div>
+        </div>
+    </article>
+</div>
