@@ -69,15 +69,16 @@ function renderContent($a, __Posts, url) {
         var _Posts = [];
         var sP = false;
 
-        $thisLoop.html(loopContent_tpl.split('posts[' + loopVar + ']').join('posts[0]'));
+        $thisLoop.html(loopContent_tpl.split('posts[' + loopVar + ']').join('posts['+loopStart+']'));
         var loopContent = $thisLoop.html();
         var loopContents = [];
 
         var rxp = /{{([^}]+)}}/g,
             curMatch;
         var check = {};
+        console.log(__Posts);
         while (curMatch = rxp.exec(loopContent)) {
-            //console.log(curMatch);
+            console.log(curMatch);
             var rf = curMatch[0];
             //console.log(rf);
             v = curMatch[1];
@@ -113,7 +114,6 @@ function renderContent($a, __Posts, url) {
             }
 
             var re = null;
-
             if (!check[j + '___' + attribute]) {
                 if (v.indexOf(':') > -1) {
                     re = new RegExp('{{' + tp + ':posts\\[' + j + '\\].' + attribute + '}}', "g");
@@ -121,7 +121,7 @@ function renderContent($a, __Posts, url) {
                     re = new RegExp('{{posts\\[' + j + '\\].' + attribute + '}}', "g");
                 }
                 //console.log(tp);
-                console.log(_Posts);
+                //console.log(_Posts);
                 if (_Posts[j]) {
                     //console.log(rxp);
                     //console.log(re);
@@ -138,6 +138,7 @@ function renderContent($a, __Posts, url) {
                 check[j + '___' + attribute] = true;
                 //console.log(loopContent);
             }
+
         }
 
         url = url.split('page=')[0];
