@@ -11,6 +11,7 @@ var __modules = null;
 //console.log(__modules);
 var __siteInfo = null;
 var __tmpl = null;
+var __hasGalModules = false;
 
 function handleModules(response) {
     //if (!localStorage.getItem('__modules')) {
@@ -32,7 +33,7 @@ function handleModules(response) {
         }
     }
     // after load nav bar, then apply header 
-    Header._init();
+    //Header._init();
     /*if (!localStorage.getItem('__modules')) {
         localStorage.setItem('__modules', JSON.stringify(__modules));
     }*/
@@ -40,7 +41,7 @@ function handleModules(response) {
 
 function renderContent($a, _Posts, url) {
     //console.log('called renderContent');
-    $a.find('[for]').each(function () {
+    $a.find('[for]').each(function() {
         $thisLoop = $(this);
         loopVar = $(this).attr('for').split('=')[0];
         rx = /{([^}]+)}/g;
@@ -139,20 +140,20 @@ function loadRenderNews($this, response) {
 
                     if ($.inArray(catid, catGet)) { // this catid is allowed to get
                         var url = API_URL + '/posts/cats/' + catid;
-                        $.getJSON(url, function (postscat) {
+                        $.getJSON(url, function(postscat) {
                             News[catid] = postscat;
                             renderContent($this, postscat, url);
                         });
                     } else {
-                        
+
                     }
                 }
             }
         } else if (!loadedAllPosts) {
             loadedAllPosts = true;
             var url = API_URL + '/posts';
-            if (catGet != 'all') url = API_URL + '/posts/cats/'+catGet.join(',');
-            $.getJSON(url, function (postscat) {
+            if (catGet != 'all') url = API_URL + '/posts/cats/' + catGet.join(',');
+            $.getJSON(url, function(postscat) {
                 renderContent($this, postscat, url);
             });
         }
@@ -167,7 +168,7 @@ function loadRenderGallery($this, response) {
     while (curMatch = rxp.exec(response.content)) {
         v = curMatch[1];
         if (!loaded) {
-            $.getJSON(API_URL + '/images/module/' + response.link, function (images) {
+            $.getJSON(API_URL + '/images/module/' + response.link, function(images) {
                 renderContentGal($this, images);
             });
             loaded = true;
@@ -178,8 +179,10 @@ function loadRenderGallery($this, response) {
 }
 
 function renderContentGal($a, _Posts) {
-    //console.log(_Posts);
-    $a.find('[for]').each(function () {
+    console.log($a);
+    var divID = $a.attr('attr-module');
+    if (!divID) divID = $a.attr('id');
+    $a.find('[for]').each(function() {
         $thisLoop = $(this);
         loopVar = $(this).attr('for').split('=')[0];
         rx = /{([^}]+)}/g;
@@ -212,8 +215,10 @@ function renderContentGal($a, _Posts) {
             if (!check[j + '___' + attribute]) {
                 re = new RegExp('{{item\\[' + j + '\\].' + attribute + '}}', "g");
                 if (_Posts[j]) {
-
                     if (attribute == 'media') {
+                        if (_Posts[j].url.match(/\.(jpeg|jpg|gif|png)$/)) {
+                            loopContent = loopContent.replace(re, '<a id="gal_' + divID + '_item_' + j + '" data-fancybox="gal_' + divID + '" data-caption="' + _Posts[j].name + '"><img src="' + _Posts[j].url + '"/></a>');
+                        }
                     } else {
                         //loopContent = loopContent.split('{{'+v+'}}').join(_Posts[j][attribute]);
                         loopContent = loopContent.replace(re, _Posts[j][attribute]);
@@ -225,6 +230,10 @@ function renderContentGal($a, _Posts) {
         }
 
         $thisLoop.html(loopContent);
+
+        /*$('a.gal_'+divID).click(function () {
+            $.fancybox.open('<div class="message-popup">'+loopContent+'</div>');
+        });*/
 
     });
 }
@@ -242,7 +251,7 @@ function renderModule($div, response) {
     response.content = renderSiteInfo($div, response.content);
     $div.html(response.content);
     //var content = $div.html();
-    if (response.javascript == "true") {
+    if (response.javascript != null && response.javascript == "true") {
         var s = document.createElement("script");
         s.type = "text/javascript";
         s.src = MAIN_URL + '/assets/dist/js/modules/' + v + '.js';
@@ -251,8 +260,7 @@ function renderModule($div, response) {
     }
     if (response.type == "news") {
         loadRenderNews($div, response);
-    }
-    else if (response.type == "gallery") {
+    } else if (response.type == "gallery") {
         loadRenderGallery($div, response);
     }
 }
@@ -264,21 +272,39 @@ function loadModulesTemplates(a) {
         curMatch;
     var ok = false;
     //if (content.match(rxp)) ok = true;
+    queryModules = [];
     while (curMatch = rxp.exec(content)) {
         v = curMatch[1];
         content = content.replace('{{module:' + v + '}}', '<div class="load_module" attr-module="' + v + '"></div>');
+        queryModules.push(v);
     }
     $div.html(content);
-    $div.find('.load_module').each(function () {
+
+    console.log(API_URL + '/modules/m/' + queryModules.join(','));
+    $.getJSON(API_URL + '/modules/m/' + queryModules.join(','), function(response) {
+        console.log(response);
+        $div.find('.load_module').each(function() {
+            var v = $(this).attr('attr-module');
+            $this = $div.find('.load_module[attr-module="' + v + '"]');
+            //$this.html(response.content);
+            if (response[v].type == 'gallery') {
+                __hasGalModules = true;
+            }
+            renderModule($this, response[v]);
+        });
+    });
+
+    /*$div.find('.load_module').each(function () {
         //$this = $div.find('.load_module[attr-module="'+v+'"]');
         var v = $(this).attr('attr-module');
         //$('body').append(v);
+
         $.getJSON(API_URL + '/modules/' + v, function (response) {
             $this = $div.find('.load_module[attr-module="' + v + '"]');
             //$this.html(response.content);
             renderModule($this, response);
         });
-    })
+    })*/
 }
 
 function renderSiteInfo($div, content) {
@@ -299,7 +325,7 @@ function renderSiteInfo($div, content) {
 function showNavTab() {
     //console.log(__modules);
     // get navs (child modules of this first level module)
-    $.each(__modules, function (i, v) {
+    $.each(__modules, function(i, v) {
         //console.log(v);
         if (v.parent && v.parent != __page) {
             if (!$('.naver-container ul li.modules_' + v.parent + ' > ul').length) {
@@ -320,98 +346,97 @@ function showNavTab() {
     });
 }
 
-function selectCat (cat) {
+function selectCat(cat) {
     // load news in this cat
     $this = $('#__module_content');
     $this.html(__tmpl);
-    var url = API_URL + '/posts/cats/'+cat;
-    $.getJSON(url, function (postscat) {
-        window.history.pushState({}, "", location.href.split('?')[0]+'?cat='+cat);
+    var url = API_URL + '/posts/cats/' + cat;
+    $.getJSON(url, function(postscat) {
+        window.history.pushState({}, "", location.href.split('?')[0] + '?cat=' + cat);
         renderContent($this, postscat, url);
     });
 }
 
-function module_showCatList (cats) {
+function module_showCatList(cats) {
     //console.log(__menu);
     if (cats == 'all') {
-        $.getJSON(API_URL+'/categories', function (allCats) { // get all Cats
-            $.each(allCats, function (key, cat) {
-                $.getJSON(API_URL+'/categories/' + cat.link, function (v) {
+        $.getJSON(API_URL + '/categories', function(allCats) { // get all Cats
+            $.each(allCats, function(key, cat) {
+                $.getJSON(API_URL + '/categories/' + cat.link, function(v) {
                     //console.log(v);
                     activeCls = (v.link == __menu ? 'active' : '');
-                    $('.naver-container > ul').append('<li class="modules_' + v.link + '"><a class="' + activeCls + ' select-cat" href="#" onclick="selectCat(\''+v.link+'\'); return false">' + v.name + '</a></li>');
+                    $('.naver-container > ul').append('<li class="modules_' + v.link + '"><a class="' + activeCls + ' select-cat" href="#" onclick="selectCat(\'' + v.link + '\'); return false">' + v.name + '</a></li>');
                 })
             })
         })
     } else {
         if (typeof cats == 'string') cats = [cats];
-        $.each(cats, function (key, cat) {
-            $.getJSON(API_URL+'/categories/' + cat, function (v) {
+        $.each(cats, function(key, cat) {
+            $.getJSON(API_URL + '/categories/' + cat, function(v) {
                 //console.log(v);
                 activeCls = (v.link == __menu ? 'active' : '');
-                $('.naver-container > ul').append('<li class="modules_' + v.link + '"><a class="' + activeCls + ' select-cat" href="#" onclick="selectCat(\''+v.link+'\'); return false">' + v.name + '</a></li>');
+                $('.naver-container > ul').append('<li class="modules_' + v.link + '"><a class="' + activeCls + ' select-cat" href="#" onclick="selectCat(\'' + v.link + '\'); return false">' + v.name + '</a></li>');
             })
         })
     }
 }
 
-function selectPageNews (cat, page) {
+function selectPageNews(cat, page) {
 
 }
 
 
 function breadCump(pathWayAr) {
     $('.__breadcrumb').html('');
-    $.each(pathWayAr, function (i, v) {
+    $.each(pathWayAr, function(i, v) {
         if (i > 0) $('.__breadcrumb').append('<span>–</span>');
-        if (i == pathWayAr.length-1) cls = 'last';
+        if (i == pathWayAr.length - 1) cls = 'last';
         else cls = '';
-        $('.__breadcrumb').append('<a href="'+v.link+'" class="'+cls+'">'+v.text+'</a>');
+        $('.__breadcrumb').append('<a href="' + v.link + '" class="' + cls + '">' + v.text + '</a>');
     })
 }
 
-$(document).ready(function () {
+$(document).ready(function() {
     // get site info
-    $.getJSON(API_URL + '/info', function (response) {
+    /*$.getJSON(API_URL + '/info', function (response) {
         __siteInfo = response;
         $('body').html(renderSiteInfo($('body')));
         Site._init();
-    });
+    });*/
 
-    $.getJSON(API_URL + '/modules', function (response) {
-        loadPage(response);
+    $.getJSON(API_URL + '/loadpage', function(res) {
+        __siteInfo = res.info[0];
+        $('body').html(renderSiteInfo($('body')));
+        Site._init();
+
+        modules = res.modules;
+        loadPage(modules);
+
+        console.log(modules);
+
+        __current_url = window.location.href.split(MAIN_URL+'/')[1].split('/');
+        console.log(__current_url);
+        breadPathAr = [{
+            'link': MAIN_URL,
+            'text': 'Home',
+        }];
+        for (var i = 0; i < __current_url.length-1; i++) {
+            v = __current_url[i];
+            $.each(modules, function (mi, mv) {
+                if (v == mv.link) {
+                    breadPathAr.push({
+                        'link': breadPathAr[breadPathAr.length-1].link + '/' + v,
+                        'text': mv.text,
+                    })
+                }
+            });
+        }
+
         if (__menu && __page != 'article') { // load menu
-            $.getJSON(API_URL + '/modules/' + __menu, function (response) {
-                $('#main_page_title').html(response.text);
-                breadCump([{
-                    'link': MAIN_URL,
-                    'text': 'Home',
-                }, {
-                    'link': MAIN_URL+'/'+response.link,
-                    'text': response.text,
-                }]);
-
-                __tmpl = response.content;
-                
-                $this = $('#__module_content');
-                $this.attr({
-                    'class': 'render_module',
-                    'attr-module': __menu
-                })
-                //console.log(__menu+'~'+__menu_parent+'~'+response.parent)
-        
-                if (response.parent && response.parent != __menu_parent) {
-                    $this.html('Wrong link');
-                } else {
-                    renderModule($('#__module_content'), response);
-                }
-
-                if (response.left == "cats") {
-                    module_showCatList(response.cat);
-                } else {
-                    showNavTab();
-                }
-            })
+            loadModuleMenu(__menu, breadPathAr);
+        }
+        if (__page == 'article' && __menu) {
+            $.getScript(MAIN_URL + '/assets/dist/js/article.js');
         }
     });
 
@@ -425,3 +450,41 @@ $(document).ready(function () {
     });*/
 });
 
+function loadModuleMenu (__menu, breadPathAr) {
+    $.getJSON(API_URL + '/modules/' + __menu, function(response) {
+        $('#main_page_title').html(response.text);
+        //console.log(response.link);
+
+        breadPathAr.push({
+            'link': breadPathAr[breadPathAr.length-1].link + '/' + response.link,
+            'text': response.text,
+        })
+        
+        breadCump(breadPathAr);
+
+        __tmpl = response.content;
+
+        $this = $('#__module_content');
+        $this.attr({
+                'class': 'render_module module-type-'+response.type,
+                'attr-module': __menu
+            })
+            //console.log(__menu+'~'+__menu_parent+'~'+response.parent)
+
+        if (response.type == 'gallery') {
+            __hasGalModules = true;
+        }
+
+        if (response.parent && response.parent != __menu_parent) {
+            $this.html('Wrong link');
+        } else {
+            renderModule($('#__module_content'), response);
+        }
+
+        if (response.left == "cats") {
+            module_showCatList(response.cat);
+        } else {
+            showNavTab();
+        }
+    })
+}

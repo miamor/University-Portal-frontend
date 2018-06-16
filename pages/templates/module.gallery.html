@@ -1,3 +1,10 @@
-<h3>Module Gallery</h3>
+<h3>Gallery Module title</h3>
 
-<div>Content here~~</div>
+<div for="i={0 to last}" style="position:relative">
+<div class="col-lg-3">{{item[i].media}}</div>
+<div class="col-lg-9">
+    <h4>{{item[i].name}}</h4>
+    <div class="des">{{item[i].content}}</div>
+</div>
+<div class="clearfix"></div>
+</div>

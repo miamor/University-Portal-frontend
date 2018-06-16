@@ -1,4 +1,4 @@
-$(document).ready(function () {
+$(function () {
     // get module content
     $.getJSON(API_URL+'/posts/find_by_link/' + __menu, function (response) {
         breadCump([{
@@ -21,12 +21,13 @@ $(document).ready(function () {
         $('#article_author').html(response.author).click(function () {
             return false
         });
+        $('#views_sta').html(response.views);
         if (typeof response.cat == 'string') response.cat = [response.cat];
         $.each(response.cat, function (i, v) {
             //console.log(v);
             $.getJSON(API_URL+'/categories/'+v, function (r) {
                 if (!$('#cat_list [attr-cat="'+v.link+'"]').length) {
-                    $('#cat_list').append('<li attr-cat="'+v.link+'"><a class="active_category orange" href="'+r.link+'">'+r.name+'</a></li>');
+                    $('#cat_list').append('<li attr-cat="'+v.link+'"><a class="active_category green" href="'+r.link+'">'+r.name+'</a></li>');
                 }
             })
         })
