@@ -840,6 +840,10 @@ var HomeFeature = {
                 HomeFeature.$articles.filter(".was_active").removeClass("was_active");
                 HomeFeature.animate = false;
                 HomeFeature.$feature.removeClass("animated");
+<<<<<<< HEAD
+=======
+                $(".fs-background-container .fs-background-media:not(:last-child)").hide();
+>>>>>>> 90bab042fac86d04d0dce100ad6c9c9169f85ee1
             });
 
             HomeFeature.index = index;
@@ -868,7 +872,11 @@ var HomeFeature = {
 // Site Ready
 $(document).ready(function () {
     //Site._init();
+<<<<<<< HEAD
     //Header._init();
+=======
+    Header._init();
+>>>>>>> 90bab042fac86d04d0dce100ad6c9c9169f85ee1
     HomeFeature._init();
     //Subnavigation._init();
     //MobileSearch.init();

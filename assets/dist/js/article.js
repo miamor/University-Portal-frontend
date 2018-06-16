@@ -22,6 +22,7 @@ $(function () {
             return false
         });
         $('#views_sta').html(response.views);
+        //$('.article-view').remove();
         if (typeof response.cat == 'string') response.cat = [response.cat];
         $.each(response.cat, function (i, v) {
             //console.log(v);

@@ -39,10 +39,12 @@ function handleModules(response) {
     }*/
 }
 
-function renderContent($a, _Posts, url) {
+function renderContent($a, __Posts, url) {
     //console.log('called renderContent');
-    $a.find('[for]').each(function() {
+    //console.log(__Posts);
+    $a.find('[for]').each(function () {
         $thisLoop = $(this);
+        //console.log($thisLoop);
         loopVar = $(this).attr('for').split('=')[0];
         rx = /{([^}]+)}/g;
         loopD = rx.exec($(this).attr('for').split('=')[1])[1];
@@ -283,15 +285,10 @@ function loadModulesTemplates(a) {
     console.log(API_URL + '/modules/m/' + queryModules.join(','));
     $.getJSON(API_URL + '/modules/m/' + queryModules.join(','), function(response) {
         console.log(response);
-        $div.find('.load_module').each(function() {
-            var v = $(this).attr('attr-module');
-            $this = $div.find('.load_module[attr-module="' + v + '"]');
-            //$this.html(response.content);
-            if (response[v].type == 'gallery') {
-                __hasGalModules = true;
-            }
-            renderModule($this, response[v]);
-        });
+        //console.log(response);
+
+        __hasGalModules = true;
+        renderModule($this, response[v]);
     });
 
     /*$div.find('.load_module').each(function () {
